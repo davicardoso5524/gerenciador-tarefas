@@ -1,0 +1,10 @@
+# Arquivos binários
+gerenciador-tarefas
+*.exe
+
+# Arquivos temporários
+*.tmp
+
+# Arquivos de configuração de IDEs
+.idea/
+.vscode/
