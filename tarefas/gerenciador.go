@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 )
 
-// Prioridade representa a prioridade de uma tarefa
 type Prioridade string
 
 const (
@@ -18,7 +17,6 @@ const (
 	Baixa   Prioridade = "Baixa"
 )
 
-// Tarefa representa uma tarefa no sistema
 type Tarefa struct {
 	ID        int       `json:"id"`
 	Titulo    string    `json:"titulo"`
@@ -26,14 +24,12 @@ type Tarefa struct {
 	Concluida bool      `json:"concluida"`
 }
 
-// GerenciadorDeTarefas gerencia as tarefas
 type GerenciadorDeTarefas struct {
 	mu       sync.Mutex
 	tarefas  []Tarefa
 	proximoID int
 }
 
-// NovoGerenciadorDeTarefas cria um novo gerenciador de tarefas
 func NovoGerenciadorDeTarefas() *GerenciadorDeTarefas {
 	return &GerenciadorDeTarefas{
 		tarefas:  []Tarefa{},
@@ -41,16 +37,13 @@ func NovoGerenciadorDeTarefas() *GerenciadorDeTarefas {
 	}
 }
 
-// TemTarefas verifica se existem tarefas no gerenciador
 func (gt *GerenciadorDeTarefas) TemTarefas() bool {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
 	return len(gt.tarefas) > 0
 }
 
-// ProcessarTarefaAsync processa uma tarefa de forma assíncrona
 func (gt *GerenciadorDeTarefas) ProcessarTarefaAsync(titulo string, prioridade Prioridade, resultado chan<- string) {
-	// Simula um processamento que leva tempo
 	time.Sleep(2 * time.Second)
 	
 	gt.mu.Lock()
@@ -67,7 +60,6 @@ func (gt *GerenciadorDeTarefas) ProcessarTarefaAsync(titulo string, prioridade P
 	resultado <- fmt.Sprintf("Tarefa '%s' processada e adicionada com sucesso!", titulo)
 }
 
-// AdicionarTarefa adiciona uma nova tarefa
 func (gt *GerenciadorDeTarefas) AdicionarTarefa(titulo string, prioridade Prioridade) {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -81,7 +73,6 @@ func (gt *GerenciadorDeTarefas) AdicionarTarefa(titulo string, prioridade Priori
 	fmt.Printf("Tarefa '%s' adicionada com sucesso!\n", titulo)
 }
 
-// ListarTarefas lista todas as tarefas
 func (gt *GerenciadorDeTarefas) ListarTarefas() {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -95,13 +86,12 @@ func (gt *GerenciadorDeTarefas) ListarTarefas() {
 	}
 }
 
-// ConcluirTarefa marca uma tarefa como concluída
 func (gt *GerenciadorDeTarefas) ConcluirTarefa(id int) {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
 	for i := range gt.tarefas {
 		if gt.tarefas[i].ID == id {
-			gt.tarefas[i].Concluida = true
+			gt.tarefas[i].Concluida = true	
 			fmt.Printf("Tarefa '%s' marcada como concluída!\n", gt.tarefas[i].Titulo)
 			return
 		}
@@ -109,7 +99,6 @@ func (gt *GerenciadorDeTarefas) ConcluirTarefa(id int) {
 	fmt.Println("Tarefa não encontrada!")
 }
 
-// ExcluirTarefaConcluida exclui uma tarefa concluída
 func (gt *GerenciadorDeTarefas) ExcluirTarefaConcluida(id int) {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -123,7 +112,6 @@ func (gt *GerenciadorDeTarefas) ExcluirTarefaConcluida(id int) {
 	fmt.Println("Tarefa não encontrada ou não está concluída!")
 }
 
-// EditarTarefa edita uma tarefa existente
 func (gt *GerenciadorDeTarefas) EditarTarefa(id int, novoTitulo string) {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -137,7 +125,6 @@ func (gt *GerenciadorDeTarefas) EditarTarefa(id int, novoTitulo string) {
 	fmt.Println("Tarefa não encontrada!")
 }
 
-// FiltrarTarefasPorStatus filtra tarefas por status
 func (gt *GerenciadorDeTarefas) FiltrarTarefasPorStatus(status string) {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -149,7 +136,6 @@ func (gt *GerenciadorDeTarefas) FiltrarTarefasPorStatus(status string) {
 	}
 }
 
-// FiltrarTarefasPorPrioridade filtra tarefas por prioridade
 func (gt *GerenciadorDeTarefas) FiltrarTarefasPorPrioridade(prioridade Prioridade) {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -161,7 +147,6 @@ func (gt *GerenciadorDeTarefas) FiltrarTarefasPorPrioridade(prioridade Prioridad
 	}
 }
 
-// Estatisticas mostra estatísticas básicas
 func (gt *GerenciadorDeTarefas) Estatisticas() {
 	gt.mu.Lock()
 	defer gt.mu.Unlock()
@@ -213,7 +198,6 @@ func (gt *GerenciadorDeTarefas) CarregarTarefas(caminho string) error {
     gt.mu.Lock()
     defer gt.mu.Unlock()
 
-    // Verifica se o arquivo existe
     if _, err := os.Stat(caminho); os.IsNotExist(err) {
         fmt.Println("Arquivo de tarefas não encontrado. Iniciando com lista vazia.")
         return nil

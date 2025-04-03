@@ -14,16 +14,13 @@ func main() {
     const nomeArquivo = "tarefas.json"
     const caminhoArquivo = diretorio + "/" + nomeArquivo
 
-	// Carregar tarefas salvas no início do programa
 	err := gerenciador.CarregarTarefas(caminhoArquivo)
 	if err != nil && !os.IsNotExist(err) {
 		fmt.Println("Erro ao carregar tarefas:", err)
 	}
 
-	// Canal para receber resultados do processamento assíncrono
 	resultadoProcessamento := make(chan string)
 
-	// Goroutine para exibir resultados do processamento assíncrono
 	go func() {
 		for resultado := range resultadoProcessamento {
 			fmt.Println(resultado)
@@ -33,13 +30,11 @@ func main() {
 	defer close(resultadoProcessamento)
 
 	for {
-		// Verifica se existem tarefas para determinar quais opções mostrar
 		temTarefas := gerenciador.TemTarefas()
 
 		fmt.Println("\nEscolha uma opção:")
 		fmt.Println("1. Adicionar tarefa")
-		
-		// Só mostra as outras opções se houver tarefas
+
 		if temTarefas {
 			fmt.Println("2. Listar tarefas")
 			fmt.Println("3. Concluir tarefa")
@@ -56,12 +51,11 @@ func main() {
         var opcao int
         fmt.Scan(&opcao)
 
-        // Ajusta as opções com base na existência de tarefas
         if !temTarefas {
             if opcao == 2 {
-                opcao = 7 // Mapeia para a opção de processamento assíncrono
+                opcao = 7 
             } else if opcao == 3 {
-                opcao = 8 // Mapeia para a opção de sair
+                opcao = 8 
             } else if opcao > 3 {
                 fmt.Println("Opção inválida!")
                 continue
@@ -181,7 +175,7 @@ func main() {
         case 6:
             gerenciador.Estatisticas()
 
-        case 7: // Adicionar tarefa com processamento assíncrono
+        case 7:
             fmt.Print("Digite o título da tarefa: ")
             var titulo string
             fmt.Scan(&titulo)
@@ -205,7 +199,7 @@ func main() {
             fmt.Println("Processando tarefa em segundo plano...")
             go gerenciador.ProcessarTarefaAsync(titulo, prioridadeTarefa, resultadoProcessamento)
             
-            // Salvar tarefas após um breve intervalo para garantir que a tarefa foi adicionada
+            
             go func() {
                 time.Sleep(3 * time.Second)
                 if err := gerenciador.SalvarTarefas(caminhoArquivo); err != nil {
